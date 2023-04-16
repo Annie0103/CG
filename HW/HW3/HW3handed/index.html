@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>WebPage Title </title>
+    </head>
+
+    <body onload="main()">
+        <canvas id="webgl" width = "800" height = "800">
+            Please use a browser that support "canvas"
+        </canvas>
+        <script src="cuon-matrix.js"></script>
+        <script src="WebGL.js"></script>
+        <div class="slidecontainer1">
+            Move(前後):<input type="range" min="-50" max="50" value="0" class="slider" id="move1">
+            Move(左右):<input type="range" min="-50" max="50" value="0" class="slider" id="move2">
+            Move(上下):<input type="range" min="-50" max="50" value="0" class="slider" id="move3">
+            
+			Rotate:<input type="range" min="-180" max="180" value="0" class="slider" id="rotate">
+        </div>
+    </body>
+</html>
+
+

@@ -1,0 +1,79 @@
+var moonVertexPositionBuffer;
+   var moonVertexNormalBuffer;
+   var moonVertexTextureCoordBuffer;
+   var moonVertexIndexBuffer;
+
+   function initBuffers() {
+	//使用三十条纬线和三十条经线划分球体
+       var latitudeBands = 30;
+       var longitudeBands = 30;
+	//球体半径
+       var radius = 2;
+	//存储顶点坐标
+       var vertexPositionData = [];
+	//存储纹理坐标
+       var textureCoordData = [];
+	//从纬线开始遍历
+       for (var latNumber=0; latNumber <= latitudeBands; latNumber++) {
+		//计算θ角度
+           var theta = latNumber * Math.PI / latitudeBands;
+           var sinTheta = Math.sin(theta);
+           var cosTheta = Math.cos(theta);
+
+           for (var longNumber=0; longNumber <= longitudeBands; longNumber++) {
+			//计算φ角度
+               var phi = longNumber * 2 * Math.PI / longitudeBands;
+               var sinPhi = Math.sin(phi);
+               var cosPhi = Math.cos(phi);
+			//计算顶点的x,y,z坐标
+               var x = radius * cosPhi * sinTheta;
+               var y = radius * cosTheta;
+               var z = radius * sinPhi * sinTheta;
+			//贴图是矩形的，我们将贴图在X轴上按照经线划分，在Y轴上按照纬线划分，来计算顶点对应的贴图U，V坐标
+               var u = longNumber / longitudeBands;
+               var v = latNumber / latitudeBands;
+			
+			
+               textureCoordData.push(u);
+               textureCoordData.push(v);
+               vertexPositionData.push(x);
+               vertexPositionData.push(y);
+               vertexPositionData.push(z);
+           }
+       }
+	//存储顶点索引
+       var indexData = [];
+       for (var latNumber=0; latNumber < latitudeBands; latNumber++) {
+           for (var longNumber=0; longNumber < longitudeBands; longNumber++) {
+               var A = (latNumber * (longitudeBands + 1)) + longNumber;
+               var B = A + longitudeBands + 1;
+			var C = A + 1;
+			var D = B + 1;
+               indexData.push(A);
+               indexData.push(B);
+               indexData.push(C);
+
+               indexData.push(B);
+               indexData.push(D);
+               indexData.push(C);
+           }
+       }
+
+       moonVertexTextureCoordBuffer = gl.createBuffer();
+       gl.bindBuffer(gl.ARRAY_BUFFER, moonVertexTextureCoordBuffer);
+       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordData), gl.STATIC_DRAW);
+       moonVertexTextureCoordBuffer.itemSize = 2;
+       moonVertexTextureCoordBuffer.numItems = textureCoordData.length / 2;
+
+       moonVertexPositionBuffer = gl.createBuffer();
+       gl.bindBuffer(gl.ARRAY_BUFFER, moonVertexPositionBuffer);
+       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPositionData), gl.STATIC_DRAW);
+       moonVertexPositionBuffer.itemSize = 3;
+       moonVertexPositionBuffer.numItems = vertexPositionData.length / 3;
+
+       moonVertexIndexBuffer = gl.createBuffer();
+       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, moonVertexIndexBuffer);
+       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
+       moonVertexIndexBuffer.itemSize = 1;
+       moonVertexIndexBuffer.numItems = indexData.length;
+   }
